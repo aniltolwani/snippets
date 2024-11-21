@@ -1,0 +1,35 @@
+defaults:
+  - _self_
+  - override hydra/hydra_logging: disabled
+  - override hydra/job_logging: disabled
+
+# Data parameters
+max_files: 3000
+train_percentage: 1.0
+dataset_paths: 
+  - "./cleaned_paragraph_data"
+
+# Model parameters
+transformer_model: "distilbert-base-uncased"
+embedding_dim: 768
+num_queries: 2
+num_negative_examples: 2
+
+# Training parameters
+learning_rate: 0.01
+weight_decay: 0.01
+num_epochs: 20
+patience: 3
+tau_initial: -3.0
+batch_size: 32
+num_workers: 4
+max_length: 512
+gradient_accumulation_steps: 4
+
+# Checkpointing
+output_suffix: "drop_small_original"
+checkpoint_dir: "./checkpoints"
+
+# Evaluation
+accuracy_frequency: 5000
+accuracy_trials: 1000
