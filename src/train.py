@@ -9,6 +9,7 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torch.utils.tensorboard.writer import SummaryWriter
 from transformers import AutoTokenizer
 from tqdm import tqdm
+import torch.optim as optim
 
 from src.model import ParagraphTransformerModel, ContrastiveLoss
 from src.dataset import ParagraphPairsDataset
@@ -115,8 +116,6 @@ def main(cfg: DictConfig):
             negatives = negatives.to(device)
             negative_masks = negative_masks.to(device)
 
-            optimizer.zero_grad()
-            
             positive_embeddings = model(positives, attention_mask=positive_masks)
             negative_embeddings = model(negatives, attention_mask=negative_masks)
             
