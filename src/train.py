@@ -13,7 +13,7 @@ import torch.optim as optim
 
 from src.model import ParagraphTransformerModel, ContrastiveLoss
 from src.dataset import ParagraphPairsDataset
-from src.utils import salt_list, collate_fn
+from src.utils import salt_list, collate_fn, calculate_mrr_at_k, quick_sanity_check
 
 @hydra.main(config_path="config", config_name="config")
 def main(cfg: DictConfig):
@@ -147,6 +147,13 @@ def main(cfg: DictConfig):
 
         avg_val_loss = val_loss / len(val_dataloader)
         scheduler.step(avg_val_loss)
+        
+        # Every 5 epochs
+        if (epoch + 1) % 5 == 0:
+            mrr = calculate_mrr_at_k(model, val_dataloader, device, k=1000)
+            sanity_passed = quick_sanity_check(model, val_dataloader, device)
+            writer.add_scalar("Metrics/MRR@1000", mrr, epoch)
+            writer.add_scalar("Metrics/Sanity_Check", int(sanity_passed), epoch)
         
         # Early stopping check
         if avg_val_loss < best_val_loss:
